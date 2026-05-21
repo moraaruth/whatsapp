@@ -8,7 +8,7 @@ const users = [
     firstName: 'Admin',
     lastName: 'User',
     email: 'admin@whatsappleadtracker.com',
-    phoneNumber: '254712345678',
+    phoneNumber: '254707438317',
     password: '$2a$10$mockhashedpassword', // This is a placeholder - we'll bypass password check
     role: 'admin',
     isActive: true,

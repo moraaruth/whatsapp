@@ -83,7 +83,7 @@ export default function Register() {
 
             <div>
               <label className="block text-xs font-medium text-lo mb-1.5">Phone (M-Pesa)</label>
-              <input type="tel" className="op-input" placeholder="254712345678"
+              <input type="tel" className="op-input" placeholder="254707438317"
                 value={form.phoneNumber} onChange={e => setForm({ ...form, phoneNumber: e.target.value })} required />
             </div>
 

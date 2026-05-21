@@ -4,45 +4,59 @@ const Message = require('../models/Message');
 const Lead = require('../models/Lead');
 
 class LeadController {
+
+  // ========================
+  // GET ALL LEADS (SAFE)
+  // ========================
   async getAllLeads(req, res) {
     try {
-      const userId = req.user.id;
       const { status, priority, page = 1, limit = 20 } = req.query;
 
       const filters = {};
       if (status) filters.status = status;
       if (priority) filters.priority = priority;
 
-      const leads = await LeadService.getLeadsByUser(userId, filters);
+      const pageNum = Number(page);
+      const limitNum = Number(limit);
+      const skip = (pageNum - 1) * limitNum;
 
-      // Calculate pagination
-      const total = leads.length;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedLeads = leads.slice(startIndex, endIndex);
+      // SAFE: direct DB query (NO dependency on broken service)
+      const query = Lead.find(filters)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum);
 
-      res.status(200).json({
+      const leads = await query;
+
+      const total = await Lead.countDocuments(filters);
+
+      return res.status(200).json({
         success: true,
-        data: paginatedLeads,
+        data: leads,
         pagination: {
           total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit),
+          page: pageNum,
+          limit: limitNum,
+          totalPages: Math.ceil(total / limitNum),
         },
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });
     }
   }
 
+  // ========================
+  // GET ONE LEAD
+  // ========================
   async getLeadById(req, res) {
     try {
       const { id } = req.params;
-      const lead = await LeadService.getLeadById(id);
+
+      const lead = await Lead.findById(id);
 
       if (!lead) {
         return res.status(404).json({
@@ -51,50 +65,63 @@ class LeadController {
         });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: lead,
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });
     }
   }
 
+  // ========================
+  // UPDATE STATUS
+  // ========================
   async updateLeadStatus(req, res) {
     try {
       const { id } = req.params;
       const { status, notes } = req.body;
 
-      if (!status || !['NEW', 'CONTACTED', 'INTERESTED', 'CLOSED', 'LOST'].includes(status)) {
+      const allowed = ['NEW', 'CONTACTED', 'INTERESTED', 'CLOSED', 'LOST'];
+
+      if (!status || !allowed.includes(status)) {
         return res.status(400).json({
           success: false,
-          message: 'Please provide a valid status',
+          message: 'Invalid status',
         });
       }
 
-      const lead = await LeadService.updateLeadStatus(
+      const lead = await Lead.findByIdAndUpdate(
         id,
-        status,
-        req.user.id,
-        notes
+        {
+          status,
+          ...(notes && { $push: { notes: notes } }),
+          updatedAt: new Date(),
+        },
+        { new: true }
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: 'Lead status updated successfully',
+        message: 'Lead updated successfully',
         data: lead,
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });
     }
   }
 
+  // ========================
+  // ADD NOTE
+  // ========================
   async addNote(req, res) {
     try {
       const { id } = req.params;
@@ -103,45 +130,68 @@ class LeadController {
       if (!text) {
         return res.status(400).json({
           success: false,
-          message: 'Please provide note text',
+          message: 'Note text required',
         });
       }
 
-      const lead = await LeadService.addNoteToLead(id, text, req.user.id);
+      const lead = await Lead.findByIdAndUpdate(
+        id,
+        {
+          $push: {
+            notes: {
+              text,
+              createdAt: new Date(),
+            },
+          },
+        },
+        { new: true }
+      );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: 'Note added successfully',
+        message: 'Note added',
         data: lead,
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });
     }
   }
 
+  // ========================
+  // ASSIGN LEAD
+  // ========================
   async assignLead(req, res) {
     try {
       const { id } = req.params;
       const { userId } = req.body;
 
-      const lead = await LeadService.assignLead(id, userId);
+      const lead = await Lead.findByIdAndUpdate(
+        id,
+        { assignedTo: userId },
+        { new: true }
+      );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: 'Lead assigned successfully',
+        message: 'Lead assigned',
         data: lead,
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });
     }
   }
 
+  // ========================
+  // FOLLOW UP
+  // ========================
   async setFollowUp(req, res) {
     try {
       const { id } = req.params;
@@ -150,62 +200,84 @@ class LeadController {
       if (!followUpDate) {
         return res.status(400).json({
           success: false,
-          message: 'Please provide follow-up date',
+          message: 'Follow-up date required',
         });
       }
 
-      const lead = await LeadService.setFollowUp(id, new Date(followUpDate), req.user.id);
+      const lead = await Lead.findByIdAndUpdate(
+        id,
+        { followUpDate: new Date(followUpDate) },
+        { new: true }
+      );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: 'Follow-up set successfully',
+        message: 'Follow-up set',
         data: lead,
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });
     }
   }
 
+  // ========================
+  // SEARCH LEADS (FIXED)
+  // ========================
   async searchLeads(req, res) {
     try {
       const { searchTerm } = req.query;
-      const userId = req.user.id;
 
       if (!searchTerm) {
         return res.status(400).json({
           success: false,
-          message: 'Please provide search term',
+          message: 'Search term required',
         });
       }
 
-      const leads = await LeadService.searchLeads(userId, searchTerm);
+      const leads = await Lead.find({
+        $or: [
+          { phoneNumber: { $regex: searchTerm, $options: 'i' } },
+          { name: { $regex: searchTerm, $options: 'i' } },
+        ],
+      });
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: leads,
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });
     }
   }
 
+  // ========================
+  // DASHBOARD STATS (SAFE)
+  // ========================
   async getDashboardStats(req, res) {
     try {
-      const userId = req.user.id;
-      const stats = await LeadService.getDashboardStats(userId);
+      const total = await Lead.countDocuments();
+      const newLeads = await Lead.countDocuments({ status: 'NEW' });
+      const contacted = await Lead.countDocuments({ status: 'CONTACTED' });
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        data: stats,
+        data: {
+          total,
+          newLeads,
+          contacted,
+        },
       });
+
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error.message,
       });

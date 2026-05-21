@@ -15,7 +15,7 @@ const resetAdmin = async () => {
       firstName: 'Admin',
       lastName: 'User',
       email: 'admin@whatsappleadtracker.com',
-      phoneNumber: '254712345678',
+      phoneNumber: '254707438317',
       password: process.env.ADMIN_PASSWORD || 'admin123',
       role: 'admin',
       isActive: true,

@@ -13,7 +13,7 @@ const seedData = async () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
-        phoneNumber: '254712345678',
+        phoneNumber: '254707438317',
         password: 'password123',
         company: 'Example Business Ltd',
         industry: 'Retail',

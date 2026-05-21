@@ -12,7 +12,7 @@ POST /webhook/whatsapp
     "changes": [{
       "value": {
         "messages": [{
-          "from": "254712345678",
+          "from": "254707438317",
           "text": { "body": "Hello, I want to buy a car" }
         }]
       }
@@ -21,7 +21,7 @@ POST /webhook/whatsapp
 }
 
 // 2. Extract phone number
-const phoneNumber = message.from.replace('c:', ''); // "254712345678"
+const phoneNumber = message.from.replace('c:', ''); // "254707438317"
 
 // 3. Check if lead exists
 let lead = await Lead.findOne({ phoneNumber });
@@ -40,7 +40,7 @@ if (!lead) {
   // Create status history
   await LeadStatusHistory.create({
     leadId: lead._id,
-    fromStatus: 'NONE',
+    fromStatus: 'null',
     toStatus: 'NEW',
     timestamp: new Date()
   });
@@ -510,7 +510,7 @@ await createNotification(
   userId,
   'REMINDER',
   'Follow-up Due',
-  'Follow up with John Doe (254712345678) today',
+  'Follow up with John Doe (254707438317) today',
   leadId
 );
 

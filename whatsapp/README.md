@@ -229,7 +229,7 @@ POST /api/auth/register
   "firstName": "John",
   "lastName": "Doe",
   "email": "john@example.com",
-  "phoneNumber": "254712345678",
+  "phoneNumber": "254707438317",
   "password": "password123"
 }
 
@@ -272,7 +272,7 @@ POST /api/leads/:id/messages
 ```
 POST /api/mpesa/stkpush
 {
-  "phoneNumber": "254712345678",
+  "phoneNumber": "254707438317",
   "amount": 1000,
   "plan": "BASIC"
 }
@@ -288,7 +288,7 @@ POST /api/mpesa/webhook  // M-Pesa callback
       "Amount": 1000,
       "MpesaReceiptNumber": "R8J5K9ABC",
       "TransactionDate": "20240115123456",
-      "PhoneNumber": "254712345678"
+      "PhoneNumber": "254707438317"
     }
   }
 }

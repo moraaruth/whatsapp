@@ -184,7 +184,7 @@ export default function Profile() {
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
               />
               <p className="mt-1 text-sm text-gray-500">
-                Your WhatsApp Business phone number (e.g., 254712345678)
+                Your WhatsApp Business phone number (e.g., 254707438317)
               </p>
             </div>
 

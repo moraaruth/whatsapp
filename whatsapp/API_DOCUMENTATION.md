@@ -11,7 +11,7 @@ Content-Type: application/json
   "firstName": "John",
   "lastName": "Doe",
   "email": "john@example.com",
-  "phoneNumber": "254712345678",
+  "phoneNumber": "254707438317",
   "password": "password123"
 }
 
@@ -24,7 +24,7 @@ Response: 201 Created
       "firstName": "John",
       "lastName": "Doe",
       "email": "john@example.com",
-      "phoneNumber": "254712345678",
+      "phoneNumber": "254707438317",
       "role": "user",
       "isActive": true
     },
@@ -52,7 +52,7 @@ Response: 200 OK
       "firstName": "John",
       "lastName": "Doe",
       "email": "john@example.com",
-      "phoneNumber": "254712345678",
+      "phoneNumber": "254707438317",
       "role": "user",
       "isActive": true
     },
@@ -91,7 +91,7 @@ Response: 200 OK
   "success": true,
   "data": {
     "_id": "60d5ec8f8f8f8f8f8f8f8f8f",
-    "phoneNumber": "254712345678",
+    "phoneNumber": "254707438317",
     "name": "John Doe",
     "status": "NEW",
     "priority": "MEDIUM",
@@ -221,7 +221,7 @@ Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "phoneNumber": "254712345678",
+  "phoneNumber": "254707438317",
   "amount": 1000,
   "plan": "BASIC"
 }
@@ -278,7 +278,7 @@ Content-Type: application/json
     "changes": [{
       "value": {
         "messages": [{
-          "from": "254712345678",
+          "from": "254707438317",
           "id": "wamid.HBgN...",
           "timestamp": "1640000000",
           "text": {
@@ -313,7 +313,7 @@ Content-Type: application/json
       "Amount": 1000,
       "MpesaReceiptNumber": "R8J5K9ABC",
       "TransactionDate": "20240115123456",
-      "PhoneNumber": "254712345678"
+      "PhoneNumber": "254707438317"
     }
   }
 }
