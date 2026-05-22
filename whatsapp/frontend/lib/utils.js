@@ -136,3 +136,19 @@ export const fmtDate = (date) =>
 
 export const fmtKES = (amount) =>
   `KES ${(amount || 0).toLocaleString()}`;
+
+/**
+ * =========================
+ * COMPATIBILITY ALIASES
+ * =========================
+ * Maps internal naming conventions to expected component imports
+ */
+
+// alias for avatarColor
+export const avatarColor = avColor;
+
+// alias for formatDate
+export const formatDate = fmtDate;
+
+// alias for formatCurrency
+export const formatCurrency = fmtKES;
